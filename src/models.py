@@ -1,6 +1,9 @@
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
+import torchvision.transforms as transforms  # ADD THIS IMPORT
+from PIL import Image
+import numpy as np
 
 
 class EdgeDetectionModel(nn.Module):
@@ -45,15 +48,15 @@ class EdgeDetectionModel(nn.Module):
 
     def forward(self, x):
         # Encoder
-        e1 = self.enc1(x)
-        e2 = self.enc2(e1)
-        e3 = self.enc3(e2)
-        e4 = self.enc4(e3)
+        e1 = self.enc1(x)  # 64x64 -> 32x32
+        e2 = self.enc2(e1)  # 32x32 -> 16x16
+        e3 = self.enc3(e2)  # 16x16 -> 8x8
+        e4 = self.enc4(e3)  # 8x8 -> 4x4
 
         # Decoder
-        d1 = self.dec1(e4)
-        d2 = self.dec2(d1)
-        d3 = self.dec3(d2)
+        d1 = self.dec1(e4)  # 4x4 -> 8x8
+        d2 = self.dec2(d1)  # 8x8 -> 16x16
+        d3 = self.dec3(d2)  # 16x16 -> 32x32
 
         # Final output
         out = self.final(d3)
@@ -81,6 +84,7 @@ class SVGPyTorchConverter:
     def _load_pretrained_weights(self):
         """Load pretrained weights - placeholder for actual weights"""
         # In a real scenario, you'd load actual pretrained weights here
+        # For now, we'll use random initialization
         pass
 
     def preprocess_image(self, image, size):
@@ -90,9 +94,9 @@ class SVGPyTorchConverter:
 
     def get_transform(self, size):
         """Get image transformation pipeline"""
-        return torch.nn.Sequential(
+        return transforms.Compose([
             transforms.Resize((size, size)),
             transforms.ToTensor(),
             transforms.Normalize(mean=[0.485, 0.456, 0.406],
                                  std=[0.229, 0.224, 0.225])
-        )
+        ])
