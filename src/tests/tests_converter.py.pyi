@@ -10,6 +10,7 @@ sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 from PIL import Image
 import cv2
 
+#something
 # Import from your modules
 from converter import SVGPyTorchGUI
 from utils import QualityValidator, SVGGenerator, ImageUtils
